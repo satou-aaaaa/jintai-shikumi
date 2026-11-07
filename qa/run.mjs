@@ -25,15 +25,15 @@ const inS = (o, s) => T[o] && (T[o].s === s || T[o].s2 === s);
 // はたらきが似ていて、同じ問題の選び肢にすると答えが2つに見える組
 const CONF = [["腎臓","糸球体"],["角膜","水晶体"],["肺","肺胞"],["脳","小脳"],["脳","脳幹"],["骨","骨髄"],["骨髄","赤血球"],["骨髄","白血球"],["骨髄","血小板"],["ひ臓","白血球"],["ひ臓","赤血球"],["ひ臓","骨髄"],["肝臓","胆のう"],["小脳","三半規管"],["肺","赤血球"],["腎臓","ぼうこう"],["尿管","ぼうこう"],["尿管","腎臓"],["心臓","血しょう"]];
 // 数（資料の値）：問題の始まり → 答え
-const FT = [["乳歯は","20本"],["永久歯は","28本"],["体の水分は","およそ60%"],["体の中の血液の量","約13分の1"],["血しょうの水分","約90%"],["赤血球は","約120日"],["心臓は、いくつ","4つ"],["心臓は1日","約10万回"],["大人の肝臓","約1kg以上"],["小腸の長さ","6〜7mほど"],["大腸の長さ","1.5〜2mほど"],["すい臓の長さ","20cmほど"],["肺はいくつ","右3つ・左2つ"],["1つの腎臓に","約100万個"],["糸球体でろ過","およそ150L"],["原尿のうち","約99%"],["体のカルシウム","99%以上"],["耳の有毛細胞","約15,000個"]];
+const FT = [["乳歯は","20本"],["永久歯は","28本"],["体の水分は","およそ60%"],["体の中の血液の量","約13分の1"],["血しょうの水分","約90%"],["赤血球は","約120日"],["心臓は、いくつ","4つ"],["大人の肝臓","約1kg以上"],["小腸の長さ","6〜7mほど"],["大腸の長さ","1.5〜2mほど"],["すい臓の長さ","20cmほど"],["肺はいくつ","右3つ・左2つ"],["1つの腎臓に","約100万個"],["糸球体でろ過","およそ150L"],["原尿のうち","約99%"],["体のカルシウム","99%以上"],["耳の有毛細胞","約15,000個"]];
 // 通り道（資料の並び）
-const SQ = { 食べ物の通り道: ["口","食道","胃","小腸","大腸","肛門"], 心臓と肺をめぐる血液の流れ: ["大静脈","右心房","右心室","肺動脈","肺","肺静脈","左心房","左心室","大動脈"], 尿の通り道: ["腎臓","腎杯","腎盂","尿管","ぼうこう","尿道"], 胆汁の通り道: ["肝臓","胆管","胆のう","十二指腸"], 音が聞こえるまで: ["外耳","中耳","蝸牛","聴神経","脳"], 小腸の中の順番: ["十二指腸","空腸","回腸"] };
+const SQ = { 食べ物の通り道: ["口","食道","胃","小腸","大腸","肛門"], 心臓と肺をめぐる血液の流れ: ["大静脈","右心房","右心室","肺動脈","肺","肺静脈","左心房","左心室","大動脈"], 尿の通り道: ["腎臓","腎杯","腎盂","尿管","ぼうこう","尿道"], 音が聞こえるまで: ["外耳","中耳","蝸牛","聴神経","脳"], 小腸の中の順番: ["十二指腸","空腸","回腸"] };
 const SYS12 = ["消化器","循環器","血液","呼吸器","泌尿器","神経","目","耳","骨","免疫","内分泌","皮膚"];
 const quoted = (t) => (t.match(/「(.+?)」/) || [])[1] || "";
 const MED = /治る|治せる|治ります|予防できる|予防になる|効果があ|若返る|診断でき/;
 
 // ---- 1. 問題（ブラウザを使わない）----
-const FIRST_DAY = '[["nakama|1","kei|10-0","setsumei|25-0","tsugi|shoka-2p","kumi|32"],["narabe|16","kazu|8-1","onaji|1-0"]]';
+const FIRST_DAY = '[["nakama|1","kei|10-0","setsumei|25-0","tsugi|shoka-2n","kumi|32"],["narabe|16","kazu|8-0","onaji|1-0"]]';
 {
   const all = Object.values(G.BANK), bad = [];
   const REAL = /ドラえもん|ポケモン|ジブリ|鬼滅|サンリオ|セーラームーン|はたらく細胞/;
@@ -41,8 +41,8 @@ const FIRST_DAY = '[["nakama|1","kei|10-0","setsumei|25-0","tsugi|shoka-2p","kum
   check("表：gen.js の器官34が、別に持った表と名前・読み・系まで同じ（名前と読みはみなちがう）", G.ORGANS.length === OT.length && G.ORGANS.every((x, i) => JSON.stringify([x.n, x.y, x.s, x.s2]) === JSON.stringify(OT[i].slice(0, 4))) && new Set(OT.map((x) => x[1])).size === OT.length && OT.every((x) => SYS12.includes(x[2])), G.ORGANS.filter((x, i) => JSON.stringify([x.n, x.y, x.s, x.s2]) !== JSON.stringify(OT[i].slice(0, 4))).map((x) => x.n).join(","));
   const kw = OT.filter(([n, , , , k]) => G.ORGANS.filter((x) => x.w.split("。")[0].includes(k)).map((x) => x.n).join() !== n).map((x) => x[0]);
   check("表：はたらきの決め手の言葉は、その器官のはたらき（最初の一文）にだけある", !kw.length, kw.join(","));
-  check("表：数の問題は18で、どれも別に持った表の答えと合う", G.FACTS.length === FT.length && G.FACTS.every((f) => { const m = FT.find(([k]) => f.t.startsWith(k)); return m && m[1] === f.a && !f.d.includes(f.a); }));
-  check("表：通り道の並びは6つで、別に持った表と同じ", G.SEQS.length === 6 && G.SEQS.every((q) => JSON.stringify(SQ[q.t]) === JSON.stringify(q.x)));
+  check("表：数の問題は17で、どれも別に持った表の答えと合う", G.FACTS.length === FT.length && G.FACTS.every((f) => { const m = FT.find(([k]) => f.t.startsWith(k)); return m && m[1] === f.a && !f.d.includes(f.a); }));
+  check("表：通り道の並びは5つで、別に持った表と同じ", G.SEQS.length === 5 && G.SEQS.every((q) => JSON.stringify(SQ[q.t]) === JSON.stringify(q.x)));
   check("表：まぎらわしい組（小脳と三半規管など）は gen.js の NEAR にもある", CONF.every(([a, b]) => G.NEAR.some(([x, y]) => (x === a && y === b) || (x === b && y === a))));
   const kwOf = (w) => OT.filter((x) => w.split("。")[0].includes(x[4])).map((x) => x[0]);
   for (const q of all) {
@@ -370,7 +370,7 @@ try {
     {
       const q = await newPage(); await closeHow(q); await q.click("#go-e"); await q.waitForTimeout(150);
       const ans = await q.evaluate(() => __km.cur().P.ans);
-      await q.locator(".ch", { hasText: ans }).first().click(); await q.waitForTimeout(100);
+      await q.locator(".ch").nth(await ansIdx(q)).click(); await q.waitForTimeout(100);
       const lab = (await q.textContent("#quit")) || "";
       await q.click("#quit"); await q.waitForTimeout(150);
       check("とことん：正解したあとでも「ここで降りる」で結果へ進み、ボタンの数も答えた数になる", /1問で終える/.test(lab) && await q.locator("#eres").count() === 1, lab);
@@ -382,7 +382,7 @@ try {
       await q.evaluate(() => { __km.save((x) => { x.runs.e.list[x.runs.e.res.length] = "onaji|0-0"; }); __km.play(); });
       await q.waitForTimeout(150);
       const ans = await q.evaluate(() => __km.cur().P.ans);
-      await q.locator(".ch", { hasText: ans }).first().click(); await q.waitForTimeout(100);
+      await q.locator(".ch").nth(await ansIdx(q)).click(); await q.waitForTimeout(100);
       const cd = await q.evaluate(() => { const cs = [...document.querySelectorAll("#scene .card")]; return { n: cs.length, txt: cs.map((c) => c.textContent), w: Math.max(0, ...cs.map((c) => c.getBoundingClientRect().right)), sw: document.documentElement.scrollWidth }; });
       check("正解すると、選び肢の器官の札が出る（同じ仲間から選ぶ問題は4枚。読み・仲間・はたらき。幅320pxではみ出さない）", cd.n === 4 && cd.txt.some((t) => t.includes("心臓（しんぞう）") && t.includes("循環器") && t.includes("ポンプ")) && cd.w <= 320 && cd.sw <= 320, JSON.stringify(cd).slice(0, 300));
       await q.context().close();
